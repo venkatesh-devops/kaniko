@@ -1,0 +1,23 @@
+[
+  {
+    "function_name": "lambda_function_1",
+    "s3_key": "lambda1.zip",
+    "folder_path": "function1-test",
+    "s3_bucket": "r-lambda-test-bucket",
+    "region": "eu-west-2"
+  },
+  {
+    "function_name": "lambda_function_2",
+    "s3_key": "lambda2.zip",
+    "folder_path": "function2-test",
+    "s3_bucket": "r-lambda-test-bucket",
+    "region": "eu-west-2"
+  },
+  {
+    "function_name": "lambda_function_3",
+    "s3_key": "lambda3.zip",
+    "folder_path": "function3-test",
+    "s3_bucket": "r-lambda-test-bucket",
+    "region": "eu-west-2"
+  }
+]
