@@ -1,0 +1,1 @@
+oc create secret docker-registry ecr-secret --docker-server=<YOUR_ECR_URI> --docker-username=AWS --docker-password=<YOUR_AWS_ACCESS_KEY_ID> --docker-email=<YOUR_EMAIL>
