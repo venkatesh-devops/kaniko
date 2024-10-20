@@ -1,21 +1,47 @@
 apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kaniko-sa
+secrets:
+  - name: ecr-secret
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: git-secret
+type: Opaque 
+data: 
+  username: dmVua2F0ZXNoLWRldm9wcw==
+  password: VXJzaGl0aGFAMTQ=
+---
+apiVersion: v1
 kind: Pod
 metadata:
-  name: kaniko-eks
+  name: kaniko
 spec:
   restartPolicy: Never
   containers:
   - name: kaniko
-    image: gcr.io/kaniko-project/executor:v1.0.0
-    imagePullPolicy: Always
-    args: ["--dockerfile=clamscan/clamsacan-lambda-src/Dockerfile",
-            "--context=git://github.com/venkatesh-devops/kaniko.git",
-            "--destination=https://hub.docker.com/r/devopsvenkateshhyd/kaniko:1.0.0",
-            "--cache=true"]
+    env:
+    - name: GIT_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: git-secret
+          key: username  
+    - name: GIT_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: git-secret
+          key: password      
+    image: gcr.io/kaniko-project/executor:latest
+    args:
+    - "--dockerfile=Dockerfile"
+    - "--context=git://github.com/venkatesh-devops/kaniko.git"
+    - "--destination=https://hub.docker.com/r/devopsvenkateshhyd/kaniko:1.0.0"
     volumeMounts:
       - name: kaniko-secret
         mountPath: /kaniko/.docker/
-        readOnly: true 
+        readOnly: true  
   volumes:
     - name: kaniko-secret
       secret:
