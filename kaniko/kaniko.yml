@@ -9,9 +9,9 @@ spec:
         - name: kaniko
           image: gcr.io/kaniko-project/executor:latest
           args:
-            - "--dockerfile=Dockerfile"
-            - "--context=dir://path/to/context"
-            - "--destination=<YOUR_ECR_URI>:<TAG>"
+            - "--dockerfile=clamscan/clamsacan-lambda-src/Dockerfile"
+            - "--context=git://github.com/venkatesh-devops/kaniko.git"
+            - "--destination=https://hub.docker.com/r/devopsvenkateshhyd/kaniko:1.0.0"
             - "--oci-layout-path=/kaniko/oci"
           volumeMounts:
             - name: kaniko-secret

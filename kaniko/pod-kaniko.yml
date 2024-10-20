@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kaniko-eks
+spec:
+  restartPolicy: Never
+  containers:
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:v1.0.0
+    imagePullPolicy: Always
+    args: ["--dockerfile=clamscan/clamsacan-lambda-src/Dockerfile",
+            "--context=git://github.com/venkatesh-devops/kaniko.git",
+            "--destination=https://hub.docker.com/r/devopsvenkateshhyd/kaniko:1.0.0",
+            "--cache=true"]
+    volumeMounts:
+      - name: kaniko-secret
+        mountPath: /kaniko/.docker/
+        readOnly: true 
+  volumes:
+    - name: kaniko-secret
+      secret:
+        secretName: ecr-secret
