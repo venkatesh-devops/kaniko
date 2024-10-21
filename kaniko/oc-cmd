@@ -1,0 +1,1 @@
+oc process -f C:\Users\Administrator\Documents\divya\kaniko\kaniko\oc-kaniko.yml | oc apply -f -
