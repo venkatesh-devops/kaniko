@@ -1,0 +1,64 @@
+kind: Template
+apiVersion: template.openshift.io/v1
+metadata:
+  name: kaniko-image-push-ecr
+  annotations:
+    description: Build Docker image from Dockerfile by using kaniko build and Push ECR
+    tags: kaniko-docker-image-build
+objects:
+  - apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      name: kaniko-sa
+    secrets:
+      - name: ecr-secret
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: git-secret2
+    type: kubernetes.io/basic-auth 
+    data:
+    stringData:
+      username: dmVua2F0ZXNoLWRldm9wcw==
+      password: VXJzaGl0aGFAMTQ=     
+  - apiVersion: v1
+    kind: Pod
+    metadata:
+      name: kaniko
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: kaniko
+        env:
+        - name: GIT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: git-secret2
+              key: username  
+        - name: GIT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: git-secret2
+              key: password  
+        - name: GIT_TOKEN
+          value: <>   
+        image: gcr.io/kaniko-project/executor:latest
+        args:
+        - "--dockerfile=Dockerfile"
+        - "--context=git://${GIT_TOKEN}@github.com/venkatesh-devops/kaniko.git"
+        - "--context-sub-path=clamscan/clamscan-lambda-src/"
+        - "--no-push"
+        # - "--destination=https://hub.docker.com/r/devopsvenkateshhyd/kaniko:1.0.0"
+        volumeMounts:
+          - name: kaniko-secret
+            mountPath: /kaniko/.docker/
+            readOnly: true  
+      volumes:
+        - name: kaniko-secret
+          secret:
+            secretName: ecr-secret
+parameters:
+  - name: GIT_TOKEN
+    value: "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"
+    description: The github token is used authencate the git repo code to download into kaniko   
+    required: true                
