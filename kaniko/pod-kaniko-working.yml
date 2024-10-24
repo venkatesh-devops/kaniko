@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kaniko-sa
+secrets:
+  - name: ecr-secret
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kaniko
+spec:
+  restartPolicy: Never
+  containers:
+  - name: kaniko
+    env:
+    - name: GIT_TOKEN
+      value: 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      
+    image: gcr.io/kaniko-project/executor:latest
+    args:
+    - "--dockerfile=Dockerfile"
+    - "--context=git://$GIT_TOKEN@github.com/venkatesh-devops/kaniko"
+    - "--context-sub-path=clamscan/clamscan-lambda-src/"
+    - "--no-push"
+    #- "--destination=https://hub.docker.com/r/devopsvenkateshhyd/kaniko:1.0.0"
+    volumeMounts:
+      - name: kaniko-secret
+        mountPath: /kaniko/.docker/
+        readOnly: true  
+  volumes:
+    - name: kaniko-secret
+      secret:
+        secretName: ecr-secret
