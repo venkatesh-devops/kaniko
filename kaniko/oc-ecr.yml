@@ -1,0 +1,41 @@
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: Opencshift-to-ECR
+spec:
+  nodeSelector: null
+  output:
+    to:
+      kind: DockerImage
+      name: '<ECR-REPO-URL>'
+    pushSecret:
+      name: image-push
+  resources: {}
+  sucessfulBuildsHistoryLimit: 5
+  failedBuildsHistoryLimit: 5     
+  strategy:
+    type: Docker
+    dockerStrategy:  
+      env:
+        - name: GIT_SSL_NO_VERIFY
+          value: 'False'  
+      dockerfilePath: dockerfile    
+  source:
+    type: Git
+    git:
+      uri: 'https://github.com/Chathuru/maven-web-project.git'
+      ref: master
+    contextDir: /
+    sourceSecret:
+      name: git-secret2
+  triggers:
+    - type: Generic
+      generic: 
+        secretReferece:
+          name: git-secret2
+    - type: Github
+      github: 
+        secretReferece:
+          name: git-secret2   
+    - type: ConfigChange
+  runPolicy: Serial  
